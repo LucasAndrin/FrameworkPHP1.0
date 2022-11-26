@@ -2,6 +2,8 @@
 
 namespace App\Model;
 
+require_once 'vendor/autoload.php';
+
 use App\Database\Model;
 
 class User extends Model {

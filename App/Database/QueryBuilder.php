@@ -76,9 +76,11 @@ class QueryBuilder {
         foreach ($requiredColumns as $key => $column) {
             $query .= $column;
             if ($lastColumnKey != $key) {
-                $query .= ', ';
+                $query .= ',';
             }
         }
+
+        $query .= " FROM {$this->getTable()}";
 
         $this->prependQuery($query);
     }

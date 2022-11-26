@@ -4,7 +4,8 @@
     "description": "Projeto PHP orientado a objetos",
     "autoload": {
         "psr-4": {
-            "App\\": "App/"
+            "App\\": "App/",
+            "public\\": "public/"
         }
     }
 }
