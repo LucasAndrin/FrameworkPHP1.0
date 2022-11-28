@@ -8,4 +8,8 @@ $user = new User;
 
 echo '<pre>';
 
-print_r($user->get(['name']));
+print_r($user->get());
+
+print_r($user->find(1)->get());
+
+print_r($user->where('name', '=', 'Jéssica')->get());

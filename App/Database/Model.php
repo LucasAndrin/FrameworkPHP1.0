@@ -18,17 +18,47 @@ class Model implements ModelInterface {
 
     protected array $fillable;
 
-    public function get(array $columns = ['*']) {
-        $queryBuilder = new QueryBuilder($this->table);
-        $pdoConnection = new PdoConnection;
-        
-        $queryBuilder->get($columns);
+    protected QueryBuilder $queryBuilder;
 
-        $pdoConnection->prepare($queryBuilder->getQuery());
-        
-        $pdoConnection->execute();
+    protected PdoConnection $pdoConnection;
 
-        return $pdoConnection->fetchAll();
+    public function __construct(){
+        $this->queryBuilder = new QueryBuilder($this->table);
+        $this->pdoConnection = new PdoConnection;
     }
-    
+
+    public function get(array $columns = ['*']): array
+    {
+        $this->queryBuilder->get($columns);
+
+        $this->pdoConnection->prepare($this->queryBuilder->getQuery());
+
+        $this->bindAll();
+        
+        $this->pdoConnection->execute();
+
+        $this->queryBuilder->resetQueryBuilder();
+
+        return $this->pdoConnection->fetchAll();
+    }
+
+    public function find(string|int $key): object
+    {
+        $this->where($this->primaryKey, '=', $key);
+
+        return $this;
+    }
+
+    public function where($column, $operator, $value): object
+    {
+        $this->queryBuilder->where($column, $operator, $value);
+
+        return $this;
+    }
+
+    private function bindAll()
+    {
+        $this->pdoConnection->bindValues($this->queryBuilder->getWhereParams());
+    }
+
 }

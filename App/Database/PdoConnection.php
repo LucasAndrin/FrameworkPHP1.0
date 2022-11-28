@@ -29,10 +29,12 @@ class PdoConnection {
         $this->stmt->bindValue(":$key", $value);
     }
 
-    public function bindValues(array $params = [])
+    public function bindValues(array ...$params)
     {
-        foreach ($params as $key => $value) {
-            $this->bindValue($key, $value);
+        foreach ($params as $param) {
+            foreach ($param as $key => $value) {
+                $this->bindValue($key, $value);
+            }
         }
     }
 
@@ -41,9 +43,14 @@ class PdoConnection {
         $this->stmt->execute();
     }
 
+    public function fetch()
+    {
+        return $this->stmt->fetch(PDO::FETCH_CLASS);
+    }
+
     public function fetchAll()
     {
-        return $this->stmt->fetchAll();
+        return $this->stmt->fetchAll(PDO::FETCH_CLASS);
     }
 
 }

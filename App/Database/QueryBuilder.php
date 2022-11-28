@@ -10,17 +10,15 @@ class QueryBuilder {
 
     private string $table;
 
-    private string $action;
-
-    private array $get = [];
-
-    private array $where = [];
-
-    private array $join = [];
-
     protected array $logicOperators = [
         '=', '<>', '>', '>=', '<', '<=' 
     ];
+
+    protected array $whereParams = [];
+
+    protected string $where = 'WHERE';
+
+    protected string $and = 'AND';
 
     protected string $select = 'SELECT';
 
@@ -55,18 +53,35 @@ class QueryBuilder {
         $this->query = $query;
     }
 
+    public function getWhereParams()
+    {
+        return $this->whereParams;
+    }
+
+    private function addWhereParams($column, $value)
+    {
+        $this->whereParams[$column] = $value;
+    }
+
     private function appendQuery(string $query)
     {
-        $this->setQuery($this->getQuery().$query);
+        $this->setQuery($this->getQuery().' '.$query);
     }
 
     private function prependQuery(string $query)
     {
-        $this->setQuery($query.$this->getQuery());
+        $this->setQuery($query.' '.$this->getQuery());
+    }
+
+    public function resetQueryBuilder()
+    {
+        $this->query = '';
+
+        $this->whereParams = [];
     }
 
     /**
-     * MMÉTODOS CONSTRUTORES
+     * MÉTODOS CONSTRUTORES
      */
     public function get(array $requiredColumns) 
     {
@@ -83,6 +98,13 @@ class QueryBuilder {
         $query .= " FROM {$this->getTable()}";
 
         $this->prependQuery($query);
+    }
+
+    public function where($column, $operator, $value)
+    {
+        $this->appendQuery((count($this->getWhereParams()) ? $this->and : $this->where).' '.$column.' '.$operator.' :'.$column);
+        
+        $this->addWhereParams($column, $value);
     }
 
 }
