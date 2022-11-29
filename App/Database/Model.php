@@ -43,10 +43,12 @@ class Model implements ModelInterface {
         return $this->pdoConnection->fetchAll();
     }
 
-    public function update(array $fields)
+    public function update(array $fields): int
     {
-        if (count(array_diff($this->fillable, $fields))) {
-            throw new InvalidArgumentException("Invalid fields to update! Check fillable attribute on your model");
+        foreach ($fields as $field => $value) {
+            if (!in_array($field, $this->fillable)) {
+                throw new InvalidArgumentException("'$field' doesn't appear in fillable attribute in your model");
+            }
         }
 
         $this->queryBuilder->update($fields);
@@ -58,6 +60,8 @@ class Model implements ModelInterface {
         $this->pdoConnection->execute();
 
         $this->queryBuilder->resetQueryBuilder();
+
+        return $this->pdoConnection->getStmt()->rowCount();
     }
 
     public function find(string|int $key): object

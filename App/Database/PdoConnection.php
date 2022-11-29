@@ -53,4 +53,9 @@ class PdoConnection {
         return $this->stmt->fetchAll(PDO::FETCH_CLASS);
     }
 
+    public function getStmt()
+    {
+        return $this->stmt;
+    }
+
 }

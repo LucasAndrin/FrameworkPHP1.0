@@ -104,10 +104,18 @@ class QueryBuilder {
     {
         $query = "{$this->update} $this->table SET ";
 
-        $lastColumnKey = count($fields) - 1;
+        $lastColumnKey = array_key_last($fields);
 
         foreach ($fields as $field => $value) {
-            $query .= "$field = $value";
+
+            $query .= "$field = ";
+
+            if (is_string($value)) {
+                $query .= "'$value'";
+            } else {
+                $query .= "$value";
+            }
+
             if ($lastColumnKey != $field) {
                 $query .= ',';
             }
