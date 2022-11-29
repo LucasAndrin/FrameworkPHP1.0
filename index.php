@@ -8,15 +8,15 @@ $user = new User;
 
 echo '<pre>';
 
-// print_r($user->get());
+var_dump($user->get());
 
-// print_r($user->find(1)->get());
+var_dump($user->find(1)->get());
 
-// print_r($user->where('name', '=', 'Jéssica')->get());
+var_dump($user->where('name', '=', 'Jéssica')->get());
 
-// print_r($user->find(2)->update(['name' => 'João', 'sex' => 1]));
+var_dump($user->find(2)->update(['name' => 'João', 'sex' => 1]));
 
-print_r($user->insert([
+var_dump($user->insert([
     'name' => 'Sabrina',
     'sex' => 1,
     'city_id' => 1,
@@ -25,3 +25,5 @@ print_r($user->insert([
     'age' => 20,
     'telephone' => 12312321
 ]));
+
+var_dump($user->where('name', '=', 'Sabrina')->delete());

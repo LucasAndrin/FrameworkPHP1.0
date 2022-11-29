@@ -28,7 +28,7 @@ class QueryBuilder {
 
     protected string $insert = 'INSERT INTO';
 
-    protected string $delete = 'DELETE';
+    protected string $delete = 'DELETE FROM';
 
     protected string $update = 'UPDATE';
 
@@ -143,7 +143,12 @@ class QueryBuilder {
 
         $fieldsToBind = implode(",", $fieldsToBind);
 
-        $this->prependQuery("{$this->update} $this->table SET $fieldsToBind");
+        $this->prependQuery("$this->update $this->table SET $fieldsToBind");
+    }
+
+    public function delete()
+    {
+        $this->prependQuery("$this->delete $this->table");
     }
 
     public function where($column, $operator, $value)
