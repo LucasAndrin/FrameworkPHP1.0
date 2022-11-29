@@ -9,6 +9,7 @@ use App\Database\{
     QueryBuilder
 };
 use App\Database\Interfaces\ModelInterface;
+use InvalidArgumentException;
 
 class Model implements ModelInterface {
 
@@ -29,7 +30,7 @@ class Model implements ModelInterface {
 
     public function get(array $columns = ['*']): array
     {
-        $this->queryBuilder->get($columns);
+        $this->queryBuilder->select($columns);
 
         $this->pdoConnection->prepare($this->queryBuilder->getQuery());
 
@@ -40,6 +41,23 @@ class Model implements ModelInterface {
         $this->queryBuilder->resetQueryBuilder();
 
         return $this->pdoConnection->fetchAll();
+    }
+
+    public function update(array $fields)
+    {
+        if (count(array_diff($this->fillable, $fields))) {
+            throw new InvalidArgumentException("Invalid fields to update! Check fillable attribute on your model");
+        }
+
+        $this->queryBuilder->update($fields);
+
+        $this->pdoConnection->prepare($this->queryBuilder->getQuery());
+
+        $this->bindAll();
+        
+        $this->pdoConnection->execute();
+
+        $this->queryBuilder->resetQueryBuilder();
     }
 
     public function find(string|int $key): object

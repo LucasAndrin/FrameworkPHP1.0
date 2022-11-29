@@ -83,7 +83,7 @@ class QueryBuilder {
     /**
      * MÉTODOS CONSTRUTORES
      */
-    public function get(array $requiredColumns) 
+    public function select(array $requiredColumns) 
     {
         $query = $this->select.' ';
         $lastColumnKey = count($requiredColumns) - 1;
@@ -96,6 +96,22 @@ class QueryBuilder {
         }
 
         $query .= " FROM {$this->getTable()}";
+
+        $this->prependQuery($query);
+    }
+
+    public function update(array $fields)
+    {
+        $query = "{$this->update} $this->table SET ";
+
+        $lastColumnKey = count($fields) - 1;
+
+        foreach ($fields as $field => $value) {
+            $query .= "$field = $value";
+            if ($lastColumnKey != $field) {
+                $query .= ',';
+            }
+        }
 
         $this->prependQuery($query);
     }
