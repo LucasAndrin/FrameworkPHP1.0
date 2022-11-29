@@ -10,6 +10,6 @@ interface ModelInterface {
 
     public function find(string|int $key): object;
 
-    public function where($column, $operator, $value): object;
+    public function where(string $column, string $operator, mixed $value): object;
 
 }

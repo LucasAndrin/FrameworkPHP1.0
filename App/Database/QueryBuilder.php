@@ -16,6 +16,10 @@ class QueryBuilder {
 
     protected array $whereParams = [];
 
+    protected array $updateParams = [];
+
+    protected array $insertParams = [];
+
     protected string $where = 'WHERE';
 
     protected string $and = 'AND';
@@ -27,6 +31,8 @@ class QueryBuilder {
     protected string $delete = 'DELETE';
 
     protected string $update = 'UPDATE';
+
+    protected string $values = 'VALUES';
 
     function __construct($table)
     {
@@ -58,9 +64,29 @@ class QueryBuilder {
         return $this->whereParams;
     }
 
+    public function getInsertParams()
+    {
+        return $this->insertParams;
+    }
+
+    public function getUpdateParams()
+    {
+        return $this->updateParams;
+    }
+
     private function addWhereParams($column, $value)
     {
         $this->whereParams[$column] = $value;
+    }
+
+    private function addUpdateParams(array $updateParams)
+    {
+        $this->updateParams = $updateParams;
+    }
+
+    private function addInsertParams(array $insertParams)
+    {
+        $this->insertParams = $insertParams;
     }
 
     private function appendQuery(string $query)
@@ -78,50 +104,46 @@ class QueryBuilder {
         $this->query = '';
 
         $this->whereParams = [];
+
+        $this->updateParams = [];
+
+        $this->insertParams = [];
     }
 
     /**
-     * MÉTODOS CONSTRUTORES
+     * Executive Methods
      */
-    public function select(array $requiredColumns) 
+    public function select(array $columns) 
     {
-        $query = $this->select.' ';
-        $lastColumnKey = count($requiredColumns) - 1;
+        $columns = implode(",", $columns);
 
-        foreach ($requiredColumns as $key => $column) {
-            $query .= $column;
-            if ($lastColumnKey != $key) {
-                $query .= ',';
-            }
-        }
+        $this->prependQuery("$this->select $columns FROM {$this->getTable()}");
+    }
 
-        $query .= " FROM {$this->getTable()}";
+    public function insert(array $fields)
+    {
+        $this->addInsertParams($fields);
 
-        $this->prependQuery($query);
+        $fieldsToBind = array_keys($fields);
+
+        $columns = implode(",", $fieldsToBind);
+
+        $values = ':'.implode(",:", $fieldsToBind);
+
+        $this->prependQuery("$this->insert $this->table($columns) $this->values($values)");
     }
 
     public function update(array $fields)
     {
-        $query = "{$this->update} $this->table SET ";
+        $this->addUpdateParams($fields);
 
-        $lastColumnKey = array_key_last($fields);
+        $fieldsToBind = array_map(function ($key) {
+            return "$key = :$key";
+        }, array_keys($fields));
 
-        foreach ($fields as $field => $value) {
+        $fieldsToBind = implode(",", $fieldsToBind);
 
-            $query .= "$field = ";
-
-            if (is_string($value)) {
-                $query .= "'$value'";
-            } else {
-                $query .= "$value";
-            }
-
-            if ($lastColumnKey != $field) {
-                $query .= ',';
-            }
-        }
-
-        $this->prependQuery($query);
+        $this->prependQuery("{$this->update} $this->table SET $fieldsToBind");
     }
 
     public function where($column, $operator, $value)
