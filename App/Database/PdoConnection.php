@@ -8,13 +8,14 @@ require_once 'config/database.php';
 
 use PDO;
 
-class PdoConnection {
+class PdoConnection
+{
 
     private PDO $connection;
 
     private $stmt;
 
-    function __construct() 
+    function __construct()
     {
         $this->connection = new PDO(POSTGRES_DNS, DB_USER, DB_PASSWORD);
     }
@@ -57,5 +58,4 @@ class PdoConnection {
     {
         return $this->stmt;
     }
-
 }

@@ -4,14 +4,15 @@ namespace App\Database;
 
 require_once 'vendor/autoload.php';
 
-class QueryBuilder {
+class QueryBuilder
+{
 
     private string $query = '';
 
     private string $table;
 
     protected array $logicOperators = [
-        '=', '<>', '>', '>=', '<', '<=' 
+        '=', '<>', '>', '>=', '<', '<='
     ];
 
     protected array $whereParams = [];
@@ -91,12 +92,12 @@ class QueryBuilder {
 
     private function appendQuery(string $query)
     {
-        $this->setQuery($this->getQuery().' '.$query);
+        $this->setQuery($this->getQuery() . ' ' . $query);
     }
 
     private function prependQuery(string $query)
     {
-        $this->setQuery($query.' '.$this->getQuery());
+        $this->setQuery($query . ' ' . $this->getQuery());
     }
 
     public function resetQueryBuilder()
@@ -113,7 +114,7 @@ class QueryBuilder {
     /**
      * Executive Methods
      */
-    public function select(array $columns) 
+    public function select(array $columns)
     {
         $columns = implode(",", $columns);
 
@@ -128,7 +129,7 @@ class QueryBuilder {
 
         $columns = implode(",", $fieldsToBind);
 
-        $values = ':'.implode(",:", $fieldsToBind);
+        $values = ':' . implode(",:", $fieldsToBind);
 
         $this->prependQuery("$this->insert $this->table($columns) $this->values($values)");
     }
@@ -153,9 +154,8 @@ class QueryBuilder {
 
     public function where($column, $operator, $value)
     {
-        $this->appendQuery((count($this->getWhereParams()) ? $this->and : $this->where).' '.$column.' '.$operator.' :'.$column);
-        
+        $this->appendQuery((count($this->getWhereParams()) ? $this->and : $this->where) . ' ' . $column . ' ' . $operator . ' :' . $column);
+
         $this->addWhereParams($column, $value);
     }
-
 }

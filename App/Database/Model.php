@@ -5,13 +5,14 @@ namespace App\Database;
 require_once 'vendor/autoload.php';
 
 use App\Database\{
-    PdoConnection, 
+    PdoConnection,
     QueryBuilder
 };
 use App\Database\Interfaces\ModelInterface;
 use InvalidArgumentException;
 
-class Model implements ModelInterface {
+class Model implements ModelInterface
+{
 
     protected string $primaryKey = 'id';
 
@@ -23,7 +24,8 @@ class Model implements ModelInterface {
 
     protected PdoConnection $pdoConnection;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->queryBuilder = new QueryBuilder($this->table);
         $this->pdoConnection = new PdoConnection;
     }
@@ -40,7 +42,7 @@ class Model implements ModelInterface {
 
         return $this->pdoConnection->fetchAll();
     }
-        
+
     public function find(string|int $key): object
     {
         $this->where($this->primaryKey, '=', $key);
@@ -106,5 +108,4 @@ class Model implements ModelInterface {
 
         $this->queryBuilder->resetQueryBuilder();
     }
-
 }
