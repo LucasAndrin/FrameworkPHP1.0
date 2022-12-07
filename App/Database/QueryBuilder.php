@@ -150,4 +150,8 @@ class QueryBuilder
 
         $this->addWhereParams($column, $value);
     }
+
+    public function join($table, $firstColumn, $secondColumn) {
+        $this->appendQuery("JOIN $table ON $firstColumn = $secondColumn");
+    }
 }

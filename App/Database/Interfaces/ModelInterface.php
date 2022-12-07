@@ -33,6 +33,16 @@ interface ModelInterface {
     public function where(string $column, string $operator, mixed $value): object;
 
     /**
+     * Build join query usign query builder
+     * 
+     * @param string $table
+     * @param string $firstColumn
+     * @param string $secondColumn
+     * @return object $this
+     */
+    public function join(string $table, string $firstColumn, string $secondColumn): object;
+
+    /**
      * Insert insert in queryBuilder and execute sql query
      * 
      * @param array $fields

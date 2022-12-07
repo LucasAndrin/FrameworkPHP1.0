@@ -57,6 +57,13 @@ class Model implements ModelInterface
         return $this;
     }
 
+    public function join(string $table, string $firstColumn, string $secondColumn): object
+    {
+        $this->queryBuilder->join($table, $firstColumn, $secondColumn);
+
+        return $this;
+    }
+
     public function insert(array $fields): int
     {
         foreach ($fields as $field => $value) {

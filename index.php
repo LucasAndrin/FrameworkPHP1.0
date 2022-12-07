@@ -16,7 +16,7 @@ $user = new User;
 $router->get('/', [UserController::class, "helloWorld"]);
 
 $router->get('/profile', function($request) use($user) {
-    var_dump($user->get());
+    var_dump($user->join('cities', 'users.city_id', 'cities.id')->get(['users.name', 'cities.name']));
 });
 
 $router->post('/get-body', function($request) {
