@@ -2,6 +2,8 @@
 
 namespace App\Database;
 
+use InvalidArgumentException;
+
 require_once 'vendor/autoload.php';
 
 class QueryBuilder
@@ -20,20 +22,6 @@ class QueryBuilder
     protected array $updateParams = [];
 
     protected array $insertParams = [];
-
-    protected string $where = 'WHERE';
-
-    protected string $and = 'AND';
-
-    protected string $select = 'SELECT';
-
-    protected string $insert = 'INSERT INTO';
-
-    protected string $delete = 'DELETE FROM';
-
-    protected string $update = 'UPDATE';
-
-    protected string $values = 'VALUES';
 
     function __construct($table)
     {
@@ -118,7 +106,7 @@ class QueryBuilder
     {
         $columns = implode(",", $columns);
 
-        $this->prependQuery("$this->select $columns FROM {$this->getTable()}");
+        $this->prependQuery("SELECT $columns FROM {$this->getTable()}");
     }
 
     public function insert(array $fields)
@@ -131,7 +119,7 @@ class QueryBuilder
 
         $values = ':' . implode(",:", $fieldsToBind);
 
-        $this->prependQuery("$this->insert $this->table($columns) $this->values($values)");
+        $this->prependQuery("INSERT INTO $this->table($columns) VALUES ($values)");
     }
 
     public function update(array $fields)
@@ -144,17 +132,21 @@ class QueryBuilder
 
         $fieldsToBind = implode(",", $fieldsToBind);
 
-        $this->prependQuery("$this->update $this->table SET $fieldsToBind");
+        $this->prependQuery("UPDATE $this->table SET $fieldsToBind");
     }
 
     public function delete()
     {
-        $this->prependQuery("$this->delete $this->table");
+        $this->prependQuery("DELETE FROM $this->table");
     }
 
     public function where($column, $operator, $value)
     {
-        $this->appendQuery((count($this->getWhereParams()) ? $this->and : $this->where) . ' ' . $column . ' ' . $operator . ' :' . $column);
+        if (!in_array($operator, $this->logicOperators)) {
+            throw new InvalidArgumentException('Invalid operator in QueryBuilder->where()');
+        }
+
+        $this->appendQuery((count($this->getWhereParams()) ? "AND" : "WHERE") . ' ' . $column . ' ' . $operator . ' :' . $column);
 
         $this->addWhereParams($column, $value);
     }
