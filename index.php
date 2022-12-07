@@ -17,10 +17,8 @@ $router->get('/', [UserController::class, "helloWorld"]);
 
 $router->get('/profile', function($request) use($user) {
     var_dump($user->get());
-    echo 'teste';
 });
 
-
-// $router->post('/get/body', function($request) {
-//     return json_encode($request->getBody());
-// });
+$router->post('/get-body', function($request) {
+    return json_encode($request->getBody());
+});
