@@ -13,12 +13,12 @@ $router = new Router(new Request);
 
 $user = new User;
 
-$router->get('/', UserController::class, "helloWorld");
+$router->get('/', [UserController::class, "helloWorld"]);
 
-// $router->get('/profile', function($request) use($user) {
-//     var_dump($user->get());
-//     echo 'teste';
-// });
+$router->get('/profile', function($request) use($user) {
+    var_dump($user->get());
+    echo 'teste';
+});
 
 
 // $router->post('/get/body', function($request) {

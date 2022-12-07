@@ -21,7 +21,7 @@ class Router
 
     function __call(string $routeMethod, array $routeArguments): void
     {
-        list($routePath, $class, $method) = $routeArguments;
+        list($routePath, $method) = $routeArguments;
 
         $routeMethodUpperCase = strtoupper($routeMethod);
         $routeMethodLowerCase = strtolower($routeMethod);
@@ -30,9 +30,7 @@ class Router
             $this->invalidMethodHandler($routeMethodUpperCase);
         }
 
-        $obj = new $class;
-
-        $this->{strtolower($routeMethodLowerCase)}[$this->formatRoute($routePath)] = call_user_func_array(array($obj, $method), array($routeArguments));
+        $this->{strtolower($routeMethodLowerCase)}[$this->formatRoute($routePath)] = $method;
     }
 
     /**
@@ -72,7 +70,14 @@ class Router
             $this->defaultRequestHandler();
         }
 
-        echo call_user_func_array($methodDictionary[$formatedRoute], array($this->request));
+        $classMethod = $methodDictionary[$formatedRoute];
+        if (is_array($classMethod) && array_key_exists(0, $classMethod)) {
+            if (is_string($classMethod[0])) {
+                $classMethod[0] = new $classMethod[0];
+            }
+        }
+
+        echo call_user_func_array($methodDictionary[$formatedRoute], [$this->request]);
     }
 
     function __destruct()
