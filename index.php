@@ -1,29 +1,26 @@
 <?php
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
+use App\Http\{
+    Router,
+    Request
+};
 use App\Model\User;
+use App\Http\Controllers\UserController;
+
+$router = new Router(new Request);
 
 $user = new User;
 
-echo '<pre>';
+$router->get('/', UserController::class, "helloWorld");
 
-var_dump($user->get());
+// $router->get('/profile', function($request) use($user) {
+//     var_dump($user->get());
+//     echo 'teste';
+// });
 
-var_dump($user->find(1)->get());
 
-var_dump($user->where('name', '=', 'Jéssica')->get());
-
-var_dump($user->find(2)->update(['name' => 'João', 'sex' => 1]));
-
-var_dump($user->insert([
-    'name' => 'Sabrina',
-    'sex' => 1,
-    'city_id' => 1,
-    'email' => 'sabrina@gmai.com',
-    'password' => 'teste',
-    'age' => 20,
-    'telephone' => 12312321
-]));
-
-var_dump($user->where('name', '=', 'Sabrina')->delete());
+// $router->post('/get/body', function($request) {
+//     return json_encode($request->getBody());
+// });
